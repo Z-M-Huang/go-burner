@@ -27,11 +27,11 @@ func GetContacts(pageSize, page int, blocked bool) ([]Contacts, error) {
 	if AuthToken == "" {
 		return nil, errors.New("Invalid AuthToken")
 	}
-	baseURL, _ := url.Parse("https://app.burnerapp.com/contracts")
+	baseURL, _ := url.Parse(fmt.Sprintf("%s/contracts", baseURL))
 	params := url.Values{}
 	params.Add("pageSize", strconv.Itoa(pageSize))
 	params.Add("page", strconv.Itoa(page))
-	params.Add("page", strconv.FormatBool(blocked))
+	params.Add("blocked", strconv.FormatBool(blocked))
 	baseURL.RawQuery = params.Encode()
 	req, err := http.NewRequest("GET", baseURL.String(), nil)
 	if err != nil {
@@ -59,14 +59,14 @@ func GetContacts(pageSize, page int, blocked bool) ([]Contacts, error) {
 
 //UpdateContact update burner's contact
 //See more at: https://developer.burnerapp.com/api-documentation/api/
-func UpdateContact(contactPhoneNumber, name, newPhoneNumber string, blocked bool) error {
+func UpdateContact(contactPhoneNumber, name, phoneNumber string, blocked bool) error {
 	if AuthToken == "" {
 		return errors.New("Invalid AuthToken")
 	}
-	baseURL, _ := url.Parse(fmt.Sprintf("https://app.burnerapp.com/contacts/%s", contactPhoneNumber))
+	baseURL, _ := url.Parse(fmt.Sprintf("%s/contacts/%s", baseURL, contactPhoneNumber))
 	params := url.Values{}
 	params.Add("name", name)
-	params.Add("newPhoneNumber", newPhoneNumber)
+	params.Add("phoneNumber", phoneNumber)
 	params.Add("blocked", strconv.FormatBool(blocked))
 	baseURL.RawQuery = params.Encode()
 	req, err := http.NewRequest(http.MethodPut, baseURL.String(), nil)

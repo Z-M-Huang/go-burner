@@ -38,7 +38,6 @@ func TestHandleAuthCallback(t *testing.T) {
 		assert.Empty(t, err)
 		w.Write(bytes)
 		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
 	})
 	mux.Handle("/oauth/access", handler)
 	go http.ListenAndServe(":80", mux)
@@ -76,7 +75,6 @@ func TestHandleAuthCallbackFailInvalidResponse(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("absdafsd"))
 		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
 	})
 	mux.Handle("/oauth/access", handler)
 	go http.ListenAndServe(":82", mux)

@@ -20,7 +20,6 @@ func TestGetBurners(t *testing.T) {
 		assert.Empty(t, err)
 		w.Write(bytes)
 		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
 	})
 	mux.Handle("/burners", handler)
 	go http.ListenAndServe(":83", mux)
@@ -37,7 +36,6 @@ func TestGetBurnersInvalidResponse(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("abcd"))
 		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
 	})
 	mux.Handle("/burners", handler)
 	go http.ListenAndServe(":84", mux)
@@ -99,7 +97,6 @@ func TestUpdateBurner(t *testing.T) {
 		assert.Empty(t, err)
 		w.Write(bytes)
 		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
 	})
 	mux.Handle("/burners/"+burnerID, handler)
 	go http.ListenAndServe(":86", mux)
@@ -124,7 +121,6 @@ func TestUpdateBurnersInvalidResponse(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("abcd"))
 		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
 	})
 	mux.Handle("/burners/"+burnerID, handler)
 	go http.ListenAndServe(":87", mux)
