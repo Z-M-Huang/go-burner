@@ -45,7 +45,7 @@ func HandleAuthCallback(code, clientID, clientSecret, redirectURL string) ([]Con
 	requestMsg.Set("code", code)
 	requestMsg.Set("grant_type", "authorization_code")
 	requestMsg.Set("redirect_uri", redirectURL)
-	req, err := http.NewRequest("POST", "https://api.burnerapp.com/oauth/access", strings.NewReader(requestMsg.Encode()))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/oauth/access", baseURL), strings.NewReader(requestMsg.Encode()))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request. Error: %s", err.Error())
 	}

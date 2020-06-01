@@ -16,6 +16,8 @@ var Client *http.Client
 //AuthToken Burner's auth token. If you have one already, you can set it directly
 var AuthToken string
 
+var baseURL string = "https://api.burnerapp.com"
+
 func init() {
 	Client = &http.Client{}
 	Client.Timeout = 2 * time.Second

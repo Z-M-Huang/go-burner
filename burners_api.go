@@ -2,6 +2,7 @@ package burner
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -12,7 +13,10 @@ import (
 //GetBurners get a list of connected burners.
 //See more at: https://developer.burnerapp.com/api-documentation/api/
 func GetBurners() ([]ConnectedBurner, error) {
-	req, err := http.NewRequest("GET", "https://app.burnerapp.com/burners", nil)
+	if AuthToken == "" {
+		return nil, errors.New("Invalid AuthToken")
+	}
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/burners", baseURL), nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create http request. Error: %s", err.Error())
 	}
@@ -39,7 +43,10 @@ func GetBurners() ([]ConnectedBurner, error) {
 //UpdateBurner update burner settings
 //See more at: https://developer.burnerapp.com/api-documentation/api/
 func UpdateBurner(burnerID, name string, ringer, notifications, autoReplyActive, autoReplyText, callerIDEnabled bool, color string) ([]ConnectedBurner, error) {
-	baseURL, _ := url.Parse(fmt.Sprintf("https://app.burnerapp.com/burners/%s", burnerID))
+	if AuthToken == "" {
+		return nil, errors.New("Invalid AuthToken")
+	}
+	baseURL, _ := url.Parse(fmt.Sprintf("%s/burners/%s", baseURL, burnerID))
 	params := url.Values{}
 	params.Add("name", name)
 	params.Add("ringer", strconv.FormatBool(ringer))

@@ -2,6 +2,7 @@ package burner
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -23,6 +24,9 @@ type Contacts struct {
 //GetContacts get a list of connected burners.
 //See more at: https://developer.burnerapp.com/api-documentation/api/
 func GetContacts(pageSize, page int, blocked bool) ([]Contacts, error) {
+	if AuthToken == "" {
+		return nil, errors.New("Invalid AuthToken")
+	}
 	baseURL, _ := url.Parse("https://app.burnerapp.com/contracts")
 	params := url.Values{}
 	params.Add("pageSize", strconv.Itoa(pageSize))
@@ -56,6 +60,9 @@ func GetContacts(pageSize, page int, blocked bool) ([]Contacts, error) {
 //UpdateContact update burner's contact
 //See more at: https://developer.burnerapp.com/api-documentation/api/
 func UpdateContact(contactPhoneNumber, name, newPhoneNumber string, blocked bool) error {
+	if AuthToken == "" {
+		return errors.New("Invalid AuthToken")
+	}
 	baseURL, _ := url.Parse(fmt.Sprintf("https://app.burnerapp.com/contacts/%s", contactPhoneNumber))
 	params := url.Values{}
 	params.Add("name", name)
@@ -84,6 +91,9 @@ func UpdateContact(contactPhoneNumber, name, newPhoneNumber string, blocked bool
 //CreateContact create burner contact for multiple burnerIDs
 //See more at: https://developer.burnerapp.com/api-documentation/api/
 func CreateContact(name, phoneNumber string, burnerIds []string) error {
+	if AuthToken == "" {
+		return errors.New("Invalid AuthToken")
+	}
 	idBytes, err := json.Marshal(burnerIds)
 	if err != nil {
 		return fmt.Errorf("failed to marshal burnerIds. Error: %s", err.Error())
@@ -93,7 +103,7 @@ func CreateContact(name, phoneNumber string, burnerIds []string) error {
 	requestMsg.Set("name", name)
 	requestMsg.Set("phoneNumber", phoneNumber)
 	requestMsg.Set("burnerIds", string(idBytes))
-	req, err := http.NewRequest("POST", "https://api.burnerapp.com/contacts", strings.NewReader(requestMsg.Encode()))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/contacts", baseURL), strings.NewReader(requestMsg.Encode()))
 	if err != nil {
 		return fmt.Errorf("failed to create request. Error: %s", err.Error())
 	}
