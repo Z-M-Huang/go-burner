@@ -1,6 +1,8 @@
 # go-burner
 Unofficial Burner API at https://developer.burnerapp.com/api-documentation. 
+
 [![codecov](https://codecov.io/gh/Z-M-Huang/go-burner/branch/master/graph/badge.svg)](https://codecov.io/gh/Z-M-Huang/go-burner)
+
 Travis CI is failing 100%. Please run `go test -v ./...` locally to verify.
 
 # Usage
