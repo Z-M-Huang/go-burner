@@ -19,7 +19,7 @@ func TestHandleAuthCallback(t *testing.T) {
 	clientID := "fakeClientID"
 	clientSecret := "fakeClientSecret"
 	redirectURL := "fakeURL"
-	baseURL = "http://localhost"
+	baseURL = "http://localhost:180"
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(t, http.MethodPost, r.Method)
@@ -40,7 +40,7 @@ func TestHandleAuthCallback(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 	})
 	mux.Handle("/oauth/access", handler)
-	go http.ListenAndServe(":80", mux)
+	go http.ListenAndServe(":180", mux)
 
 	b, err := HandleAuthCallback(code, clientID, clientSecret, redirectURL)
 	assert.Empty(t, err)
