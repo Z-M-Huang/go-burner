@@ -23,7 +23,8 @@ func TestHandleAuthCallback(t *testing.T) {
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(t, http.MethodPost, r.Method)
-		assert.Empty(t, r.ParseForm())
+		err := r.ParseForm()
+		assert.Empty(t, err)
 		assert.Equal(t, code, r.FormValue("code"))
 		assert.Equal(t, clientID, r.FormValue("client_id"))
 		assert.Equal(t, clientSecret, r.FormValue("client_secret"))

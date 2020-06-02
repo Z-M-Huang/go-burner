@@ -27,7 +27,7 @@ func GetContacts(pageSize, page int, blocked bool) ([]Contacts, error) {
 	if AuthToken == "" {
 		return nil, errors.New("Invalid AuthToken")
 	}
-	baseURL, _ := url.Parse(fmt.Sprintf("%s/contracts/", baseURL))
+	baseURL, _ := url.Parse(fmt.Sprintf("%s/contacts/", baseURL))
 	params := url.Values{}
 	params.Add("pageSize", strconv.Itoa(pageSize))
 	params.Add("page", strconv.Itoa(page))
@@ -108,6 +108,7 @@ func CreateContact(name, phoneNumber string, burnerIds []string) error {
 		return fmt.Errorf("failed to create request. Error: %s", err.Error())
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	setAuthHeader(req)
 
 	resp, err := Client.Do(req)
 	if err != nil {

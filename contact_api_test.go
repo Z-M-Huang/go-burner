@@ -24,7 +24,7 @@ func TestGetContacts(t *testing.T) {
 		w.Write(bytes)
 		w.Header().Add("Content-Type", "application/json")
 	})
-	mux.Handle("/contracts/", handler)
+	mux.Handle("/contacts/", handler)
 	go http.ListenAndServe(":89", mux)
 
 	ret, err := GetContacts(1, 2, true)
@@ -40,7 +40,7 @@ func TestGetContactsInvalidResponse(t *testing.T) {
 		w.Write([]byte("abcd"))
 		w.Header().Add("Content-Type", "application/json")
 	})
-	mux.Handle("/contracts/", handler)
+	mux.Handle("/contacts/", handler)
 	go http.ListenAndServe(":90", mux)
 
 	ret, err := GetContacts(1, 2, false)
@@ -81,11 +81,11 @@ func TestUpdateContact(t *testing.T) {
 		assert.Equal(t, "2", r.URL.Query()["phoneNumber"][0])
 		assert.Equal(t, "true", r.URL.Query()["blocked"][0])
 	})
-	mux.Handle("/contracts/id/", handler)
+	mux.Handle("/contacts/id/", handler)
 	go http.ListenAndServe(":92", mux)
 
 	err := UpdateContact("id", "1", "2", true)
-	assert.NotEmpty(t, err)
+	assert.Empty(t, err)
 }
 
 func TestUpdateContactNot200(t *testing.T) {
@@ -95,7 +95,7 @@ func TestUpdateContactNot200(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	})
-	mux.Handle("/contracts/id/", handler)
+	mux.Handle("/contacts/id/", handler)
 	go http.ListenAndServe(":93", mux)
 
 	err := UpdateContact("id", "1", "2", true)
@@ -114,17 +114,19 @@ func TestCreateContact(t *testing.T) {
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.NotEmpty(t, r.Header.Get("Authorization"))
-		assert.NotEmpty(t, http.MethodPost, r.Method)
-		assert.Empty(t, r.ParseForm)
+		assert.Equal(t, http.MethodPost, r.Method)
+		err := r.ParseForm()
+		assert.Empty(t, err)
 		assert.Equal(t, "1", r.FormValue("name"))
 		assert.Equal(t, "2", r.FormValue("phoneNumber"))
 		assert.NotEmpty(t, r.FormValue("burnerIds"))
+		w.WriteHeader(http.StatusOK)
 	})
-	mux.Handle("/contracts/id/", handler)
+	mux.Handle("/contacts/", handler)
 	go http.ListenAndServe(":94", mux)
 
 	err := CreateContact("1", "2", []string{"abcd"})
-	assert.NotEmpty(t, err)
+	assert.Empty(t, err)
 }
 
 func TestCreateContactNot200(t *testing.T) {
@@ -134,7 +136,7 @@ func TestCreateContactNot200(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	})
-	mux.Handle("/contracts/id/", handler)
+	mux.Handle("/contacts/", handler)
 	go http.ListenAndServe(":95", mux)
 
 	err := CreateContact("1", "2", []string{"abcd"})

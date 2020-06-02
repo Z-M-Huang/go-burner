@@ -82,7 +82,8 @@ func TestUpdateBurner(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(t, http.MethodPut, r.Method)
 		assert.NotEmpty(t, r.Header.Get("Authorization"))
-		assert.Empty(t, r.ParseForm())
+		err := r.ParseForm()
+		assert.Empty(t, err)
 		assert.Equal(t, name, r.FormValue("name"))
 		assert.Equal(t, "true", r.FormValue("ringer"))
 		assert.Equal(t, "true", r.FormValue("notifications"))
