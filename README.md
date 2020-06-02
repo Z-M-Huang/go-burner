@@ -13,7 +13,7 @@ Travis CI is failing 100%. Please run `go test -v ./...` locally to verify.
   clientID := "fakeClientID"
   clientSecret := "fakeClientSecret"
   redirectURL := "https://example.com/auth_redirect"
-	mux := http.NewServeMux()
+  mux := http.NewServeMux()
   mux.Handle("/login", func(w http.ResponseWriter, r *http.Request){
     http.Redirect(w, r, burner.GetAuthorizeEndpoint(clientID, redirectURL), 301)
   })
