@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetContacts(t *testing.T) {
-	baseURL = "http://localhost:189"
+	baseURL = "http://localhost:6189"
 	AuthToken = "abcd"
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +25,7 @@ func TestGetContacts(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 	})
 	mux.Handle("/contracts", handler)
-	go http.ListenAndServe(":189", mux)
+	go http.ListenAndServe(":6189", mux)
 
 	ret, err := GetContacts(1, 2, true)
 	assert.Empty(t, err)

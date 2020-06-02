@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetBurners(t *testing.T) {
-	baseURL = "http://localhost:183"
+	baseURL = "http://localhost:6183"
 	AuthToken = "abcd"
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +22,7 @@ func TestGetBurners(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 	})
 	mux.Handle("/burners", handler)
-	go http.ListenAndServe(":183", mux)
+	go http.ListenAndServe(":6183", mux)
 
 	ret, err := GetBurners()
 	assert.Empty(t, err)
@@ -68,7 +68,7 @@ func TestGetBurnersInvalidAuthToken(t *testing.T) {
 }
 
 func TestUpdateBurner(t *testing.T) {
-	baseURL = "http://localhost:186"
+	baseURL = "http://localhost:6186"
 	AuthToken = "abcd"
 	burnerID := "1234"
 	name := "testname"
@@ -99,7 +99,7 @@ func TestUpdateBurner(t *testing.T) {
 		w.Header().Add("Content-Type", "application/json")
 	})
 	mux.Handle("/burners/"+burnerID, handler)
-	go http.ListenAndServe(":186", mux)
+	go http.ListenAndServe(":6186", mux)
 
 	ret, err := UpdateBurner(burnerID, name, ringer, notification, autoReplyActive, autoReplyText, callerIDEnabled, color)
 	assert.Empty(t, err)

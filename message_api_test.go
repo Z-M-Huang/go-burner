@@ -8,7 +8,7 @@ import (
 )
 
 func TestSend(t *testing.T) {
-	baseURL = "http://localhost:96"
+	baseURL = "http://localhost:6196"
 	AuthToken = "abcd"
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +22,7 @@ func TestSend(t *testing.T) {
 		assert.Equal(t, "4", r.FormValue("mediaUrl"))
 	})
 	mux.Handle("/messages", handler)
-	go http.ListenAndServe(":96", mux)
+	go http.ListenAndServe(":6196", mux)
 
 	err := Send("1", "2", "3", "4")
 	assert.Empty(t, err)
