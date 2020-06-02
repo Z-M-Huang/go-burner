@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetBurners(t *testing.T) {
-	baseURL = "http://localhost:6183"
+	baseURL = "http://localhost:83"
 	AuthToken = "abcd"
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -21,8 +21,8 @@ func TestGetBurners(t *testing.T) {
 		w.Write(bytes)
 		w.Header().Add("Content-Type", "application/json")
 	})
-	mux.Handle("/burners", handler)
-	go http.ListenAndServe(":6183", mux)
+	mux.Handle("/burners/", handler)
+	go http.ListenAndServe(":83", mux)
 
 	ret, err := GetBurners()
 	assert.Empty(t, err)
@@ -37,7 +37,7 @@ func TestGetBurnersInvalidResponse(t *testing.T) {
 		w.Write([]byte("abcd"))
 		w.Header().Add("Content-Type", "application/json")
 	})
-	mux.Handle("/burners", handler)
+	mux.Handle("/burners/", handler)
 	go http.ListenAndServe(":84", mux)
 
 	ret, err := GetBurners()
@@ -52,7 +52,7 @@ func TestGetBurnersNot200(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	})
-	mux.Handle("/burners", handler)
+	mux.Handle("/burners/", handler)
 	go http.ListenAndServe(":85", mux)
 
 	ret, err := GetBurners()
@@ -68,7 +68,7 @@ func TestGetBurnersInvalidAuthToken(t *testing.T) {
 }
 
 func TestUpdateBurner(t *testing.T) {
-	baseURL = "http://localhost:6186"
+	baseURL = "http://localhost:86"
 	AuthToken = "abcd"
 	burnerID := "1234"
 	name := "testname"
@@ -98,8 +98,8 @@ func TestUpdateBurner(t *testing.T) {
 		w.Write(bytes)
 		w.Header().Add("Content-Type", "application/json")
 	})
-	mux.Handle("/burners/"+burnerID, handler)
-	go http.ListenAndServe(":6186", mux)
+	mux.Handle("/burners/"+burnerID+"/", handler)
+	go http.ListenAndServe(":86", mux)
 
 	ret, err := UpdateBurner(burnerID, name, ringer, notification, autoReplyActive, autoReplyText, callerIDEnabled, color)
 	assert.Empty(t, err)
@@ -122,7 +122,7 @@ func TestUpdateBurnersInvalidResponse(t *testing.T) {
 		w.Write([]byte("abcd"))
 		w.Header().Add("Content-Type", "application/json")
 	})
-	mux.Handle("/burners/"+burnerID, handler)
+	mux.Handle("/burners/"+burnerID+"/", handler)
 	go http.ListenAndServe(":87", mux)
 
 	ret, err := UpdateBurner(burnerID, name, ringer, notification, autoReplyActive, autoReplyText, callerIDEnabled, color)
@@ -145,7 +145,7 @@ func TestUpdateBurnersNot200(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	})
-	mux.Handle("/burners/"+burnerID, handler)
+	mux.Handle("/burners/"+burnerID+"/", handler)
 	go http.ListenAndServe(":88", mux)
 
 	ret, err := UpdateBurner(burnerID, name, ringer, notification, autoReplyActive, autoReplyText, callerIDEnabled, color)

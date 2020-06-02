@@ -1,6 +1,8 @@
 package burner
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"testing"
 
@@ -8,21 +10,23 @@ import (
 )
 
 func TestSend(t *testing.T) {
-	baseURL = "http://localhost:6196"
+	baseURL = "http://localhost:96"
 	AuthToken = "abcd"
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.NotEmpty(t, r.Header.Get("Authorization"))
 		assert.NotEmpty(t, http.MethodPost, r.Method)
-		err := r.ParseForm()
+		request := &sendMessageRequest{}
+		bodyBytes, err := ioutil.ReadAll(r.Body)
 		assert.Empty(t, err)
-		assert.Equal(t, "1", r.FormValue("burnerId"))
-		assert.Equal(t, "2", r.FormValue("toNumber"))
-		assert.Equal(t, "3", r.FormValue("text"))
-		assert.Equal(t, "4", r.FormValue("mediaUrl"))
+		assert.Empty(t, json.Unmarshal(bodyBytes, &request))
+		assert.Equal(t, "1", request.BurnerID)
+		assert.Equal(t, "2", request.ToNumber)
+		assert.Equal(t, "3", request.Text)
+		assert.Equal(t, "4", request.MediaURL)
 	})
-	mux.Handle("/messages", handler)
-	go http.ListenAndServe(":6196", mux)
+	mux.Handle("/messages/", handler)
+	go http.ListenAndServe(":96", mux)
 
 	err := Send("1", "2", "3", "4")
 	assert.Empty(t, err)
@@ -35,7 +39,7 @@ func TestSendNot200(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	})
-	mux.Handle("/messages", handler)
+	mux.Handle("/messages/", handler)
 	go http.ListenAndServe(":97", mux)
 
 	err := Send("1", "2", "3", "4")
