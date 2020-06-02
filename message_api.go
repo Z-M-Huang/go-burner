@@ -19,12 +19,13 @@ func Send(burnerID, toNumber, text, mediaURL string) error {
 	requestMsg.Set("burnerId", burnerID)
 	requestMsg.Set("toNumber", toNumber)
 	requestMsg.Set("text", text)
-	requestMsg.Set("mediaURL", mediaURL)
+	requestMsg.Set("mediaUrl", mediaURL)
 	req, err := http.NewRequest("POST", fmt.Sprintf("%s/messages", baseURL), strings.NewReader(requestMsg.Encode()))
 	if err != nil {
 		return fmt.Errorf("failed to create request. Error: %s", err.Error())
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	setAuthHeader(req)
 
 	resp, err := Client.Do(req)
 	if err != nil {
