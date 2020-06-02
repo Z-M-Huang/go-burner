@@ -27,7 +27,7 @@ func GetContacts(pageSize, page int, blocked bool) ([]Contacts, error) {
 	if AuthToken == "" {
 		return nil, errors.New("Invalid AuthToken")
 	}
-	baseURL, _ := url.Parse(fmt.Sprintf("%s/contracts", baseURL))
+	baseURL, _ := url.Parse(fmt.Sprintf("%s/contracts/", baseURL))
 	params := url.Values{}
 	params.Add("pageSize", strconv.Itoa(pageSize))
 	params.Add("page", strconv.Itoa(page))
@@ -63,7 +63,7 @@ func UpdateContact(contactPhoneNumber, name, phoneNumber string, blocked bool) e
 	if AuthToken == "" {
 		return errors.New("Invalid AuthToken")
 	}
-	baseURL, _ := url.Parse(fmt.Sprintf("%s/contacts/%s", baseURL, contactPhoneNumber))
+	baseURL, _ := url.Parse(fmt.Sprintf("%s/contacts/%s/", baseURL, contactPhoneNumber))
 	params := url.Values{}
 	params.Add("name", name)
 	params.Add("phoneNumber", phoneNumber)
@@ -103,7 +103,7 @@ func CreateContact(name, phoneNumber string, burnerIds []string) error {
 	requestMsg.Set("name", name)
 	requestMsg.Set("phoneNumber", phoneNumber)
 	requestMsg.Set("burnerIds", string(idBytes))
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/contacts", baseURL), strings.NewReader(requestMsg.Encode()))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/contacts/", baseURL), strings.NewReader(requestMsg.Encode()))
 	if err != nil {
 		return fmt.Errorf("failed to create request. Error: %s", err.Error())
 	}

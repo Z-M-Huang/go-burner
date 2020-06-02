@@ -16,7 +16,7 @@ var Client *http.Client
 //AuthToken Burner's auth token. If you have one already, you can set it directly
 var AuthToken string
 
-var baseURL string = "https://api.burnerapp.com"
+var baseURL string = "https://api.burnerapp.com/v1"
 
 func init() {
 	Client = &http.Client{}

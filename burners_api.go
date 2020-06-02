@@ -16,7 +16,7 @@ func GetBurners() ([]ConnectedBurner, error) {
 	if AuthToken == "" {
 		return nil, errors.New("Invalid AuthToken")
 	}
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/burners", baseURL), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/burners/", baseURL), nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create http request. Error: %s", err.Error())
 	}
@@ -46,7 +46,7 @@ func UpdateBurner(burnerID, name string, ringer, notifications, autoReplyActive,
 	if AuthToken == "" {
 		return nil, errors.New("Invalid AuthToken")
 	}
-	baseURL, _ := url.Parse(fmt.Sprintf("%s/burners/%s", baseURL, burnerID))
+	baseURL, _ := url.Parse(fmt.Sprintf("%s/burners/%s/", baseURL, burnerID))
 	params := url.Values{}
 	params.Add("name", name)
 	params.Add("ringer", strconv.FormatBool(ringer))
