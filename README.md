@@ -19,15 +19,17 @@ Travis CI is failing 100%. Please run `go test -v ./...` locally to verify.
   })
   mux.Handle("/auth_redirect", func(w http.ResponseWriter, r *http.Request){
     code := r.URL.Query()["code"]
-    burners, err := burner.HandleAuthCallback(code, clientID, clientSecret, redirectURL)
-    err = burner.Send(burners[0].ID, "+11234567890", "sample text", "")
+    client, burners, err := burner.HandleAuthCallback(code, clientID, clientSecret, redirectURL)
+    err = client.Send(burners[0].ID, "+11234567890", "sample text", "")
   })
 ```
 
 ### Set access token directly
 ```go
   import "github.com/Z-M-Huang/go-burner"
-  burner.AuthToken = "fakeAuthToken"
+  client := &burner.Client{
+    AuthToken: "fakeAuthToken",
+  }
   burnerID := "fakeBurnerID"
-  err := burner.Send(burnerID, "+11234567890", "sample text", "")
+  err := client.Send(burnerID, "+11234567890", "sample text", "")
 ```
