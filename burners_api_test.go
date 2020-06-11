@@ -10,7 +10,9 @@ import (
 
 func TestGetBurners(t *testing.T) {
 	baseURL = "http://localhost:83"
-	AuthToken = "abcd"
+	client := &Client{
+		AuthToken: "abcd",
+	}
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.NotEmpty(t, r.Header.Get("Authorization"))
@@ -24,14 +26,16 @@ func TestGetBurners(t *testing.T) {
 	mux.Handle("/burners/", handler)
 	go http.ListenAndServe(":83", mux)
 
-	ret, err := GetBurners()
+	ret, err := client.GetBurners()
 	assert.Empty(t, err)
 	assert.NotEmpty(t, ret)
 }
 
 func TestGetBurnersInvalidResponse(t *testing.T) {
 	baseURL = "http://localhost:84"
-	AuthToken = "abcd"
+	client := &Client{
+		AuthToken: "abcd",
+	}
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("abcd"))
@@ -40,14 +44,16 @@ func TestGetBurnersInvalidResponse(t *testing.T) {
 	mux.Handle("/burners/", handler)
 	go http.ListenAndServe(":84", mux)
 
-	ret, err := GetBurners()
+	ret, err := client.GetBurners()
 	assert.NotEmpty(t, err)
 	assert.Empty(t, ret)
 }
 
 func TestGetBurnersNot200(t *testing.T) {
 	baseURL = "http://localhost:85"
-	AuthToken = "abcd"
+	client := &Client{
+		AuthToken: "abcd",
+	}
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
@@ -55,21 +61,25 @@ func TestGetBurnersNot200(t *testing.T) {
 	mux.Handle("/burners/", handler)
 	go http.ListenAndServe(":85", mux)
 
-	ret, err := GetBurners()
+	ret, err := client.GetBurners()
 	assert.NotEmpty(t, err)
 	assert.Empty(t, ret)
 }
 
 func TestGetBurnersInvalidAuthToken(t *testing.T) {
-	AuthToken = ""
-	ret, err := GetBurners()
+	client := &Client{
+		AuthToken: "",
+	}
+	ret, err := client.GetBurners()
 	assert.NotEmpty(t, err)
 	assert.Empty(t, ret)
 }
 
 func TestUpdateBurner(t *testing.T) {
 	baseURL = "http://localhost:86"
-	AuthToken = "abcd"
+	client := &Client{
+		AuthToken: "abcd",
+	}
 	burnerID := "1234"
 	name := "testname"
 	ringer := true
@@ -102,14 +112,16 @@ func TestUpdateBurner(t *testing.T) {
 	mux.Handle("/burners/"+burnerID+"/", handler)
 	go http.ListenAndServe(":86", mux)
 
-	ret, err := UpdateBurner(burnerID, name, ringer, notification, autoReplyActive, autoReplyText, callerIDEnabled, color)
+	ret, err := client.UpdateBurner(burnerID, name, ringer, notification, autoReplyActive, autoReplyText, callerIDEnabled, color)
 	assert.Empty(t, err)
 	assert.NotEmpty(t, ret)
 }
 
 func TestUpdateBurnersInvalidResponse(t *testing.T) {
 	baseURL = "http://localhost:87"
-	AuthToken = "abcd"
+	client := &Client{
+		AuthToken: "abcd",
+	}
 	burnerID := "1234"
 	name := "testname"
 	ringer := true
@@ -126,14 +138,16 @@ func TestUpdateBurnersInvalidResponse(t *testing.T) {
 	mux.Handle("/burners/"+burnerID+"/", handler)
 	go http.ListenAndServe(":87", mux)
 
-	ret, err := UpdateBurner(burnerID, name, ringer, notification, autoReplyActive, autoReplyText, callerIDEnabled, color)
+	ret, err := client.UpdateBurner(burnerID, name, ringer, notification, autoReplyActive, autoReplyText, callerIDEnabled, color)
 	assert.NotEmpty(t, err)
 	assert.Empty(t, ret)
 }
 
 func TestUpdateBurnersNot200(t *testing.T) {
 	baseURL = "http://localhost:88"
-	AuthToken = "abcd"
+	client := &Client{
+		AuthToken: "abcd",
+	}
 	burnerID := "1234"
 	name := "testname"
 	ringer := true
@@ -149,13 +163,15 @@ func TestUpdateBurnersNot200(t *testing.T) {
 	mux.Handle("/burners/"+burnerID+"/", handler)
 	go http.ListenAndServe(":88", mux)
 
-	ret, err := UpdateBurner(burnerID, name, ringer, notification, autoReplyActive, autoReplyText, callerIDEnabled, color)
+	ret, err := client.UpdateBurner(burnerID, name, ringer, notification, autoReplyActive, autoReplyText, callerIDEnabled, color)
 	assert.NotEmpty(t, err)
 	assert.Empty(t, ret)
 }
 
 func TestUpdateBurnersInvalidAuthToken(t *testing.T) {
-	AuthToken = ""
+	client := &Client{
+		AuthToken: "",
+	}
 	burnerID := "1234"
 	name := "testname"
 	ringer := true
@@ -164,7 +180,7 @@ func TestUpdateBurnersInvalidAuthToken(t *testing.T) {
 	autoReplyText := true
 	callerIDEnabled := true
 	color := "testcolor"
-	ret, err := UpdateBurner(burnerID, name, ringer, notification, autoReplyActive, autoReplyText, callerIDEnabled, color)
+	ret, err := client.UpdateBurner(burnerID, name, ringer, notification, autoReplyActive, autoReplyText, callerIDEnabled, color)
 	assert.NotEmpty(t, err)
 	assert.Empty(t, ret)
 }

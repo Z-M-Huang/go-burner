@@ -23,8 +23,8 @@ type Contacts struct {
 
 //GetContacts get a list of connected burners.
 //See more at: https://developer.burnerapp.com/api-documentation/api/
-func GetContacts(pageSize, page int, blocked bool) ([]Contacts, error) {
-	if AuthToken == "" {
+func (c *Client) GetContacts(pageSize, page int, blocked bool) ([]Contacts, error) {
+	if c.AuthToken == "" {
 		return nil, errors.New("Invalid AuthToken")
 	}
 	baseURL, _ := url.Parse(fmt.Sprintf("%s/contacts/", baseURL))
@@ -37,8 +37,8 @@ func GetContacts(pageSize, page int, blocked bool) ([]Contacts, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create http request. Error: %s", err.Error())
 	}
-	setAuthHeader(req)
-	resp, err := Client.Do(req)
+	c.setAuthHeader(req)
+	resp, err := HTTPClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to send request to Burner: %s", err.Error())
 	}
@@ -59,8 +59,8 @@ func GetContacts(pageSize, page int, blocked bool) ([]Contacts, error) {
 
 //UpdateContact update burner's contact
 //See more at: https://developer.burnerapp.com/api-documentation/api/
-func UpdateContact(contactPhoneNumber, name, phoneNumber string, blocked bool) error {
-	if AuthToken == "" {
+func (c *Client) UpdateContact(contactPhoneNumber, name, phoneNumber string, blocked bool) error {
+	if c.AuthToken == "" {
 		return errors.New("Invalid AuthToken")
 	}
 	baseURL, _ := url.Parse(fmt.Sprintf("%s/contacts/%s/", baseURL, contactPhoneNumber))
@@ -73,8 +73,8 @@ func UpdateContact(contactPhoneNumber, name, phoneNumber string, blocked bool) e
 	if err != nil {
 		return fmt.Errorf("failed to create http request. Error: %s", err.Error())
 	}
-	setAuthHeader(req)
-	resp, err := Client.Do(req)
+	c.setAuthHeader(req)
+	resp, err := HTTPClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to send request to Burner: %s", err.Error())
 	}
@@ -90,8 +90,8 @@ func UpdateContact(contactPhoneNumber, name, phoneNumber string, blocked bool) e
 
 //CreateContact create burner contact for multiple burnerIDs
 //See more at: https://developer.burnerapp.com/api-documentation/api/
-func CreateContact(name, phoneNumber string, burnerIds []string) error {
-	if AuthToken == "" {
+func (c *Client) CreateContact(name, phoneNumber string, burnerIds []string) error {
+	if c.AuthToken == "" {
 		return errors.New("Invalid AuthToken")
 	}
 	idBytes, err := json.Marshal(burnerIds)
@@ -108,9 +108,9 @@ func CreateContact(name, phoneNumber string, burnerIds []string) error {
 		return fmt.Errorf("failed to create request. Error: %s", err.Error())
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	setAuthHeader(req)
+	c.setAuthHeader(req)
 
-	resp, err := Client.Do(req)
+	resp, err := HTTPClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to send request to Burner: %s", err.Error())
 	}

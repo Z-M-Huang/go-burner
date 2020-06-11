@@ -12,16 +12,16 @@ import (
 
 //GetBurners get a list of connected burners.
 //See more at: https://developer.burnerapp.com/api-documentation/api/
-func GetBurners() ([]ConnectedBurner, error) {
-	if AuthToken == "" {
+func (c *Client) GetBurners() ([]ConnectedBurner, error) {
+	if c.AuthToken == "" {
 		return nil, errors.New("Invalid AuthToken")
 	}
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/burners/", baseURL), nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create http request. Error: %s", err.Error())
 	}
-	setAuthHeader(req)
-	resp, err := Client.Do(req)
+	c.setAuthHeader(req)
+	resp, err := HTTPClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to send request to Burner: %s", err.Error())
 	}
@@ -42,8 +42,8 @@ func GetBurners() ([]ConnectedBurner, error) {
 
 //UpdateBurner update burner settings
 //See more at: https://developer.burnerapp.com/api-documentation/api/
-func UpdateBurner(burnerID, name string, ringer, notifications, autoReplyActive, autoReplyText, callerIDEnabled bool, color string) ([]ConnectedBurner, error) {
-	if AuthToken == "" {
+func (c *Client) UpdateBurner(burnerID, name string, ringer, notifications, autoReplyActive, autoReplyText, callerIDEnabled bool, color string) ([]ConnectedBurner, error) {
+	if c.AuthToken == "" {
 		return nil, errors.New("Invalid AuthToken")
 	}
 	baseURL, _ := url.Parse(fmt.Sprintf("%s/burners/%s/", baseURL, burnerID))
@@ -60,8 +60,8 @@ func UpdateBurner(burnerID, name string, ringer, notifications, autoReplyActive,
 	if err != nil {
 		return nil, fmt.Errorf("failed to create http request. Error: %s", err.Error())
 	}
-	setAuthHeader(req)
-	resp, err := Client.Do(req)
+	c.setAuthHeader(req)
+	resp, err := HTTPClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to send request to Burner: %s", err.Error())
 	}

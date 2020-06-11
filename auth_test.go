@@ -43,10 +43,11 @@ func TestHandleAuthCallback(t *testing.T) {
 	mux.Handle("/oauth/access", handler)
 	go http.ListenAndServe(":180", mux)
 
-	b, err := HandleAuthCallback(code, clientID, clientSecret, redirectURL)
+	c, b, err := HandleAuthCallback(code, clientID, clientSecret, redirectURL)
 	assert.Empty(t, err)
 	assert.NotEmpty(t, b)
-	assert.Equal(t, "abcd", AuthToken)
+	assert.NotEmpty(t, c)
+	assert.Equal(t, "abcd", c.AuthToken)
 }
 
 func TestHandleAuthCallbackFailNot200(t *testing.T) {
@@ -62,7 +63,7 @@ func TestHandleAuthCallbackFailNot200(t *testing.T) {
 	mux.Handle("/oauth/access/", handler)
 	go http.ListenAndServe(":81", mux)
 
-	_, err := HandleAuthCallback(code, clientID, clientSecret, redirectURL)
+	_, _, err := HandleAuthCallback(code, clientID, clientSecret, redirectURL)
 	assert.NotEmpty(t, err)
 }
 
@@ -80,6 +81,6 @@ func TestHandleAuthCallbackFailInvalidResponse(t *testing.T) {
 	mux.Handle("/oauth/access/", handler)
 	go http.ListenAndServe(":82", mux)
 
-	_, err := HandleAuthCallback(code, clientID, clientSecret, redirectURL)
+	_, _, err := HandleAuthCallback(code, clientID, clientSecret, redirectURL)
 	assert.NotEmpty(t, err)
 }

@@ -11,7 +11,9 @@ import (
 
 func TestSend(t *testing.T) {
 	baseURL = "http://localhost:96"
-	AuthToken = "abcd"
+	client := &Client{
+		AuthToken: "abcd",
+	}
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.NotEmpty(t, r.Header.Get("Authorization"))
@@ -28,13 +30,15 @@ func TestSend(t *testing.T) {
 	mux.Handle("/messages/", handler)
 	go http.ListenAndServe(":96", mux)
 
-	err := Send("1", "2", "3", "4")
+	err := client.Send("1", "2", "3", "4")
 	assert.Empty(t, err)
 }
 
 func TestSendNot200(t *testing.T) {
 	baseURL = "http://localhost:97"
-	AuthToken = "abcd"
+	client := &Client{
+		AuthToken: "abcd",
+	}
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
@@ -42,12 +46,14 @@ func TestSendNot200(t *testing.T) {
 	mux.Handle("/messages/", handler)
 	go http.ListenAndServe(":97", mux)
 
-	err := Send("1", "2", "3", "4")
+	err := client.Send("1", "2", "3", "4")
 	assert.NotEmpty(t, err)
 }
 
 func TestSendInvalidAuthToken(t *testing.T) {
-	AuthToken = ""
-	err := Send("1", "2", "3", "4")
+	client := &Client{
+		AuthToken: "",
+	}
+	err := client.Send("1", "2", "3", "4")
 	assert.NotEmpty(t, err)
 }

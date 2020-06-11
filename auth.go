@@ -38,7 +38,7 @@ type ConnectedBurner struct {
 //code will present in the query string from Burner's callback request.
 //redirectURL will need to be exact match with the request.
 //See more at: https://developer.burnerapp.com/api-documentation/authentication/
-func HandleAuthCallback(code, clientID, clientSecret, redirectURL string) ([]ConnectedBurner, error) {
+func HandleAuthCallback(code, clientID, clientSecret, redirectURL string) (*Client, []ConnectedBurner, error) {
 	requestMsg := url.Values{}
 	requestMsg.Set("client_id", clientID)
 	requestMsg.Set("client_secret", clientSecret)
@@ -47,25 +47,27 @@ func HandleAuthCallback(code, clientID, clientSecret, redirectURL string) ([]Con
 	requestMsg.Set("redirect_uri", redirectURL)
 	req, err := http.NewRequest("POST", fmt.Sprintf("%s/oauth/access", baseURL), strings.NewReader(requestMsg.Encode()))
 	if err != nil {
-		return nil, fmt.Errorf("failed to create request. Error: %s", err.Error())
+		return nil, nil, fmt.Errorf("failed to create request. Error: %s", err.Error())
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Add("Accept", "application/json")
 
-	resp, err := Client.Do(req)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("failed to send auth request to Burner: %s", err.Error())
+		return nil, nil, fmt.Errorf("failed to send auth request to Burner: %s", err.Error())
 	}
 	defer resp.Body.Close()
 	bodyBytes, _ := ioutil.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to get Burner auth token. Burner returned: %s", string(bodyBytes))
+		return nil, nil, fmt.Errorf("failed to get Burner auth token. Burner returned: %s", string(bodyBytes))
 	}
 	respBody := &AccessResponse{}
 	err = json.Unmarshal(bodyBytes, &respBody)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal AccessResponse response. Error: %s", err.Error())
+		return nil, nil, fmt.Errorf("failed to unmarshal AccessResponse response. Error: %s", err.Error())
 	}
-	AuthToken = respBody.AccessToken
-	return respBody.ConnectedBurners, nil
+	client := &Client{
+		AuthToken: respBody.AccessToken,
+	}
+	return client, respBody.ConnectedBurners, nil
 }

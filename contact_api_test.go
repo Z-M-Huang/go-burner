@@ -10,7 +10,9 @@ import (
 
 func TestGetContacts(t *testing.T) {
 	baseURL = "http://localhost:89"
-	AuthToken = "abcd"
+	client := &Client{
+		AuthToken: "abcd",
+	}
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.NotEmpty(t, r.Header.Get("Authorization"))
@@ -27,14 +29,16 @@ func TestGetContacts(t *testing.T) {
 	mux.Handle("/contacts/", handler)
 	go http.ListenAndServe(":89", mux)
 
-	ret, err := GetContacts(1, 2, true)
+	ret, err := client.GetContacts(1, 2, true)
 	assert.Empty(t, err)
 	assert.NotEmpty(t, ret)
 }
 
 func TestGetContactsInvalidResponse(t *testing.T) {
 	baseURL = "http://localhost:90"
-	AuthToken = "abcd"
+	client := &Client{
+		AuthToken: "abcd",
+	}
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("abcd"))
@@ -43,14 +47,16 @@ func TestGetContactsInvalidResponse(t *testing.T) {
 	mux.Handle("/contacts/", handler)
 	go http.ListenAndServe(":90", mux)
 
-	ret, err := GetContacts(1, 2, false)
+	ret, err := client.GetContacts(1, 2, false)
 	assert.NotEmpty(t, err)
 	assert.Empty(t, ret)
 }
 
 func TestGetContactsNot200(t *testing.T) {
 	baseURL = "http://localhost:91"
-	AuthToken = "abcd"
+	client := &Client{
+		AuthToken: "abcd",
+	}
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
@@ -58,21 +64,25 @@ func TestGetContactsNot200(t *testing.T) {
 	mux.Handle("/burners/", handler)
 	go http.ListenAndServe(":91", mux)
 
-	ret, err := GetContacts(1, 2, false)
+	ret, err := client.GetContacts(1, 2, false)
 	assert.NotEmpty(t, err)
 	assert.Empty(t, ret)
 }
 
 func TestGetContactsInvalidAuthToken(t *testing.T) {
-	AuthToken = ""
-	ret, err := GetContacts(1, 2, false)
+	client := &Client{
+		AuthToken: "",
+	}
+	ret, err := client.GetContacts(1, 2, false)
 	assert.NotEmpty(t, err)
 	assert.Empty(t, ret)
 }
 
 func TestUpdateContact(t *testing.T) {
 	baseURL = "http://localhost:92"
-	AuthToken = "abcd"
+	client := &Client{
+		AuthToken: "abcd",
+	}
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.NotEmpty(t, r.Header.Get("Authorization"))
@@ -84,13 +94,15 @@ func TestUpdateContact(t *testing.T) {
 	mux.Handle("/contacts/id/", handler)
 	go http.ListenAndServe(":92", mux)
 
-	err := UpdateContact("id", "1", "2", true)
+	err := client.UpdateContact("id", "1", "2", true)
 	assert.Empty(t, err)
 }
 
 func TestUpdateContactNot200(t *testing.T) {
 	baseURL = "http://localhost:93"
-	AuthToken = "abcd"
+	client := &Client{
+		AuthToken: "abcd",
+	}
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
@@ -98,19 +110,23 @@ func TestUpdateContactNot200(t *testing.T) {
 	mux.Handle("/contacts/id/", handler)
 	go http.ListenAndServe(":93", mux)
 
-	err := UpdateContact("id", "1", "2", true)
+	err := client.UpdateContact("id", "1", "2", true)
 	assert.NotEmpty(t, err)
 }
 
 func TestUpdateContactInvalidAuthToken(t *testing.T) {
-	AuthToken = ""
-	err := UpdateContact("id", "1", "2", true)
+	client := &Client{
+		AuthToken: "",
+	}
+	err := client.UpdateContact("id", "1", "2", true)
 	assert.NotEmpty(t, err)
 }
 
 func TestCreateContact(t *testing.T) {
 	baseURL = "http://localhost:94"
-	AuthToken = "abcd"
+	client := &Client{
+		AuthToken: "abcd",
+	}
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.NotEmpty(t, r.Header.Get("Authorization"))
@@ -125,13 +141,15 @@ func TestCreateContact(t *testing.T) {
 	mux.Handle("/contacts/", handler)
 	go http.ListenAndServe(":94", mux)
 
-	err := CreateContact("1", "2", []string{"abcd"})
+	err := client.CreateContact("1", "2", []string{"abcd"})
 	assert.Empty(t, err)
 }
 
 func TestCreateContactNot200(t *testing.T) {
 	baseURL = "http://localhost:95"
-	AuthToken = "abcd"
+	client := &Client{
+		AuthToken: "abcd",
+	}
 	mux := http.NewServeMux()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
@@ -139,12 +157,14 @@ func TestCreateContactNot200(t *testing.T) {
 	mux.Handle("/contacts/", handler)
 	go http.ListenAndServe(":95", mux)
 
-	err := CreateContact("1", "2", []string{"abcd"})
+	err := client.CreateContact("1", "2", []string{"abcd"})
 	assert.NotEmpty(t, err)
 }
 
 func TestCreateContactInvalidAuthToken(t *testing.T) {
-	AuthToken = ""
-	err := CreateContact("1", "2", []string{"abcd"})
+	client := &Client{
+		AuthToken: "",
+	}
+	err := client.CreateContact("1", "2", []string{"abcd"})
 	assert.NotEmpty(t, err)
 }

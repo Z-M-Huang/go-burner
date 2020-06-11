@@ -10,19 +10,22 @@ import (
 	"time"
 )
 
-//Client http client to call burner's service. If you want to call behind a proxy, you can create a new one and set
-var Client *http.Client
+//Client Burner Client
+type Client struct {
+	//AuthToken Burner's auth token. If you have one already, you can set it directly
+	AuthToken string
+}
 
-//AuthToken Burner's auth token. If you have one already, you can set it directly
-var AuthToken string
+//HTTPClient http client to send burner request.
+var HTTPClient *http.Client
+
+func init() {
+	HTTPClient = &http.Client{}
+	HTTPClient.Timeout = 2 * time.Second
+}
 
 var baseURL string = "https://api.burnerapp.com/v1"
 
-func init() {
-	Client = &http.Client{}
-	Client.Timeout = 2 * time.Second
-}
-
-func setAuthHeader(req *http.Request) {
-	req.Header.Add("Authorization", "Bearer "+AuthToken)
+func (c *Client) setAuthHeader(req *http.Request) {
+	req.Header.Add("Authorization", "Bearer "+c.AuthToken)
 }

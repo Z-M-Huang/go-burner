@@ -18,8 +18,8 @@ type sendMessageRequest struct {
 
 //Send sends a message to phone number
 //See more at: https://developer.burnerapp.com/api-documentation/api/
-func Send(burnerID, toNumber, text, mediaURL string) error {
-	if AuthToken == "" {
+func (c *Client) Send(burnerID, toNumber, text, mediaURL string) error {
+	if c.AuthToken == "" {
 		return errors.New("Invalid AuthToken")
 	}
 	requestBody, err := json.Marshal(&sendMessageRequest{
@@ -36,9 +36,9 @@ func Send(burnerID, toNumber, text, mediaURL string) error {
 		return fmt.Errorf("failed to create request. Error: %s", err.Error())
 	}
 	req.Header.Add("Content-Type", "application/json")
-	setAuthHeader(req)
+	c.setAuthHeader(req)
 
-	resp, err := Client.Do(req)
+	resp, err := HTTPClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to send request to Burner: %s", err.Error())
 	}
