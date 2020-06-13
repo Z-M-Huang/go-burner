@@ -22,7 +22,7 @@ type incomingWebhookRequestData struct {
 
 //SendIncomingWebhook sends a message to phone number using incoming webhook
 //See more at: https://developer.burnerapp.com/api-documentation/incoming-webhooks/
-func (c *Client) SendIncomingWebhook(burnerID, toNumber, text string) error {
+func (c *Client) SendIncomingWebhook(toNumber, text string) error {
 	_, err := url.ParseRequestURI(c.IncomingWebhookURL)
 	if err != nil {
 		return errors.New("Empty Incoming Webhook URL")

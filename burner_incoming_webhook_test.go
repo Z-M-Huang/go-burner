@@ -21,13 +21,13 @@ func TestSendInWebhook(t *testing.T) {
 		assert.Empty(t, err)
 		assert.Empty(t, json.Unmarshal(bodyBytes, &request))
 		assert.Equal(t, "message", request.Intent)
-		assert.Equal(t, "2", request.Data.ToNumber)
-		assert.Equal(t, "3", request.Data.Text)
+		assert.Equal(t, "1", request.Data.ToNumber)
+		assert.Equal(t, "2", request.Data.Text)
 	})
 	mux.Handle("/incomingWebHook", handler)
 	go http.ListenAndServe(":10196", mux)
 
-	err := client.SendIncomingWebhook("1", "2", "3")
+	err := client.SendIncomingWebhook("1", "2")
 	assert.Empty(t, err)
 }
 
@@ -42,7 +42,7 @@ func TestSendInWebhookNot200(t *testing.T) {
 	mux.Handle("/incomingWebHook", handler)
 	go http.ListenAndServe(":197", mux)
 
-	err := client.SendIncomingWebhook("1", "2", "3")
+	err := client.SendIncomingWebhook("1", "2")
 	assert.NotEmpty(t, err)
 }
 
@@ -50,6 +50,6 @@ func TestSendInWebhookInvalidURL(t *testing.T) {
 	client := &Client{
 		IncomingWebhookURL: "",
 	}
-	err := client.SendIncomingWebhook("1", "2", "3")
+	err := client.SendIncomingWebhook("1", "2")
 	assert.NotEmpty(t, err)
 }
