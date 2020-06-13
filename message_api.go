@@ -20,7 +20,7 @@ type sendMessageRequest struct {
 //See more at: https://developer.burnerapp.com/api-documentation/api/
 func (c *Client) Send(burnerID, toNumber, text, mediaURL string) error {
 	if c.AuthToken == "" {
-		return errors.New("Invalid AuthToken")
+		return errors.New("Empty AuthToken")
 	}
 	requestBody, err := json.Marshal(&sendMessageRequest{
 		BurnerID: burnerID,
@@ -35,7 +35,7 @@ func (c *Client) Send(burnerID, toNumber, text, mediaURL string) error {
 	if err != nil {
 		return fmt.Errorf("failed to create request. Error: %s", err.Error())
 	}
-	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Content-Type", "application/json; charset=utf-8")
 	c.setAuthHeader(req)
 
 	resp, err := HTTPClient.Do(req)

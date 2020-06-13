@@ -14,6 +14,9 @@ import (
 type Client struct {
 	//AuthToken Burner's auth token. If you have one already, you can set it directly
 	AuthToken string
+
+	//IncomingWebhookURL is generated in burner's developer portal.
+	IncomingWebhookURL string
 }
 
 //HTTPClient http client to send burner request.
